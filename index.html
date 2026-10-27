@@ -3,221 +3,420 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Визуальное программирование — Проект 1</title>
+<title>Визуальное программирование · Школа 30</title>
 <style>
-  * { box-sizing: border-box; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
   body {
     font-family: -apple-system, Arial, sans-serif;
-    max-width: 900px; margin: 0 auto; padding: 20px;
-    background: #f0f2f5; color: #222;
+    background: linear-gradient(135deg, #1F3A5F 0%, #2a5298 100%);
+    min-height: 100vh; color: #222; padding: 20px;
   }
-  header {
-    text-align: center;
+  .container { max-width: 960px; margin: 0 auto; }
+  
+  /* Хедер */
+  .header {
+    text-align: center; color: white; padding: 30px 20px;
     margin-bottom: 30px;
-    padding: 20px;
-    background: white;
-    border-radius: 12px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
   }
-  h1 {
-    color: #1F3A5F;
-    font-size: 26px;
-    margin: 0 0 5px 0;
+  .header h1 {
+    font-size: 30px; margin-bottom: 8px;
+    text-shadow: 0 2px 8px rgba(0,0,0,0.2);
   }
-  .subtitle {
-    color: #666;
-    font-size: 16px;
-    margin: 0;
+  .header p {
+    font-size: 15px; opacity: 0.9;
   }
-  h2 {
-    color: #2a5298; margin-top: 35px; padding-bottom: 8px;
-    border-bottom: 3px solid #2a5298;
+  
+  /* Хлебные крошки */
+  .breadcrumbs {
+    background: rgba(255,255,255,0.15); backdrop-filter: blur(10px);
+    padding: 12px 20px; border-radius: 10px;
+    margin-bottom: 20px; font-size: 14px;
+    color: white;
   }
+  .breadcrumbs a {
+    color: white; text-decoration: none;
+    padding: 4px 8px; border-radius: 6px;
+    transition: background 0.15s;
+  }
+  .breadcrumbs a:hover { background: rgba(255,255,255,0.25); }
+  .breadcrumbs span { opacity: 0.7; margin: 0 4px; }
+  
+  /* Карточки выбора */
+  .cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 20px;
+  }
+  .card {
+    background: white; padding: 30px 25px;
+    border-radius: 16px; text-decoration: none;
+    color: #222; box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+    transition: all 0.25s;
+    display: flex; flex-direction: column; align-items: center;
+    text-align: center;
+  }
+  .card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 30px rgba(0,0,0,0.25);
+  }
+  .card .emoji { font-size: 52px; margin-bottom: 15px; }
+  .card h3 {
+    font-size: 20px; color: #1F3A5F;
+    margin-bottom: 8px; font-weight: 700;
+  }
+  .card .count {
+    font-size: 13px; color: #888; margin-top: 10px;
+  }
+  .card .badge {
+    display: inline-block; margin-top: 12px;
+    padding: 4px 12px; border-radius: 20px;
+    background: #e8f0fe; color: #1F3A5F;
+    font-size: 12px; font-weight: 600;
+  }
+  
+  /* Список детей */
+  .child-list { display: flex; flex-direction: column; gap: 12px; }
   .child {
-    background: white; margin: 12px 0; padding: 15px 20px;
-    border-radius: 12px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    background: white; padding: 20px 24px;
+    border-radius: 14px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);
   }
   .child h3 {
-    margin: 0 0 12px 0; color: #333; font-size: 17px;
+    font-size: 17px; color: #1F3A5F;
+    margin-bottom: 12px;
   }
-  .game {
-    display: inline-block; background: #0066cc; color: white;
-    padding: 8px 16px; margin: 4px 4px 4px 0;
-    border-radius: 8px; text-decoration: none;
-    font-size: 14px; transition: 0.15s;
+  .game-btn {
+    display: inline-block; padding: 10px 18px;
+    background: #0066cc; color: white;
+    text-decoration: none; border-radius: 8px;
+    margin: 4px 6px 4px 0; font-size: 14px;
+    font-weight: 600; transition: 0.15s;
   }
-  .game:hover { background: #0052a3; transform: translateY(-1px); }
-  .loading {
-    text-align: center; padding: 50px 20px;
-    color: #666; font-size: 18px;
-  }
-  .error {
-    background: #ffe6e6; border-left: 4px solid #d00;
-    padding: 15px; border-radius: 8px; color: #a00;
-    margin: 20px 0;
-  }
-  .refresh {
-    text-align: center; margin: 30px 0;
-  }
-  .refresh button {
-    background: #2a5298; color: white; border: none;
-    padding: 10px 24px; border-radius: 8px;
-    font-size: 14px; cursor: pointer;
-  }
-  .refresh button:hover { background: #1F3A5F; }
+  .game-btn:hover { background: #0052a3; transform: translateY(-1px); }
+  
+  /* Пусто */
   .empty {
-    text-align: center; padding: 40px;
+    background: white; padding: 40px 20px;
+    border-radius: 14px; text-align: center;
     color: #888; font-style: italic;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
   }
+  .empty .big { font-size: 48px; display: block; margin-bottom: 10px; }
+  
+  /* Кнопка обновить */
+  .refresh-bar {
+    text-align: center; margin: 25px 0;
+  }
+  .refresh-bar button {
+    background: rgba(255,255,255,0.9); color: #1F3A5F;
+    border: none; padding: 12px 26px;
+    border-radius: 10px; font-size: 14px;
+    font-weight: 600; cursor: pointer;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.15);
+    transition: 0.15s;
+  }
+  .refresh-bar button:hover { transform: translateY(-1px); }
+  
+  .loading {
+    text-align: center; padding: 50px;
+    color: white; font-size: 18px;
+  }
+  
+  /* Мобильные */
   @media (max-width: 600px) {
-    h1 { font-size: 20px; }
-    .subtitle { font-size: 14px; }
-    .child { padding: 12px 15px; }
-    .game { display: block; text-align: center; margin: 6px 0; }
+    .header h1 { font-size: 22px; }
+    .header p { font-size: 13px; }
+    .card .emoji { font-size: 40px; }
+    .card h3 { font-size: 17px; }
+    .child { padding: 16px; }
+    .game-btn { display: block; text-align: center; margin: 6px 0; }
   }
 </style>
 </head>
 <body>
 
-<header>
-  <h1>🎮 Визуальное программирование</h1>
-  <p class="subtitle">Проект 1 · Наши игры</p>
-</header>
-
-<div id="content"><div class="loading">Загрузка списка игр...</div></div>
+<div class="container">
+  <div class="header">
+    <h1>🎮 Визуальное программирование</h1>
+    <p>Школа 30 · Проекты наших учеников</p>
+  </div>
+  
+  <div id="breadcrumbs"></div>
+  <div id="content"><div class="loading">Загрузка...</div></div>
+  <div class="refresh-bar">
+    <button onclick="forceRefresh()">🔄 Обновить список</button>
+  </div>
+</div>
 
 <script>
 // ============ НАСТРОЙКИ ============
-const USER = 'annavatagina0-svg';  
-const REPO = 'games-2026';         
+const USER = 'annavatagina0-svg';
+const REPO = 'games-2026';
 
-const GROUP_NAMES = {
-  'group1': 'Группа 1 · Вторник',
-  'group2': 'Группа 2 · Пятница'
+const GROUPS = {
+  'group1': { title: 'Группа · Вторник', emoji: '📅', color: '#2a5298' },
+  'group2': { title: 'Группа · Пятница', emoji: '📅', color: '#c2185b' }
 };
 
-const CACHE_KEY = 'games_catalog_v1';
-const CACHE_TTL = 5 * 60 * 1000; 
+// Проекты: определяем по ПРЕФИКСУ имени файла
+const PROJECTS = {
+  'halloween':  { title: 'Проект 1. Хэллоуин',        emoji: '🎃', short: 'Хэллоуин' },
+  'mother_day': { title: 'Проект 2. Подарок маме',    emoji: '💐', short: 'Подарок маме' },
+  'podarok':    { title: 'Проект 2. Подарок маме',    emoji: '💐', short: 'Подарок маме' },
+  'new_year':   { title: 'Проект 3. Новый год',        emoji: '🎄', short: 'Новый год' },
+  'novy_god':   { title: 'Проект 3. Новый год',        emoji: '🎄', short: 'Новый год' }
+};
 
-// ============ ФУНКЦИИ ============
-function prettyName(str) {
-  return str
-    .replace(/[_-]/g, ' ')
-    .replace(/\b\w/g, c => c.toUpperCase());
+const CACHE_KEY = 'games_catalog_v2';
+const CACHE_TTL = 5 * 60 * 1000;
+
+let DATA = null;  // group → project → child → [games]
+
+// ============ УТИЛИТЫ ============
+function prettyName(s) {
+  return s.replace(/[_-]/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
 }
 
-function renderAll(groups) {
-  const groupNames = Object.keys(groups).sort();
-  if (groupNames.length === 0) {
-    return '<div class="empty">Пока нет ни одной игры. Загрузи первый файл в репозиторий.</div>';
+function detectProject(filename) {
+  const lower = filename.toLowerCase();
+  // Сортируем ключи по длине (сначала длинные, чтобы "new_year" не съел "new")
+  const keys = Object.keys(PROJECTS).sort((a,b) => b.length - a.length);
+  for (const key of keys) {
+    if (lower.startsWith(key)) return key;
   }
-  
-  let html = '';
-  for (const groupKey of groupNames) {
-    const groupTitle = GROUP_NAMES[groupKey] || prettyName(groupKey);
-    html += `<h2>${groupTitle}</h2>`;
-    
-    const children = groups[groupKey];
-    const childKeys = Object.keys(children).sort();
-    
-    for (const childKey of childKeys) {
-      const child = children[childKey];
-      html += `<div class="child">`;
-      html += `<h3>${prettyName(childKey)}</h3>`;
-      
-      child.games.sort((a, b) => a.title.localeCompare(b.title));
-      for (const game of child.games) {
-        html += `<a class="game" href="${game.url}" target="_blank">${game.title}</a>`;
-      }
-      html += `</div>`;
-    }
-  }
-  return html;
+  return null;
 }
 
-async function loadGames(forceRefresh = false) {
-  const content = document.getElementById('content');
-  
-  if (!forceRefresh) {
+// ============ ПАРСИНГ ============
+async function loadData(force = false) {
+  if (!force) {
     try {
-      const cached = localStorage.getItem(CACHE_KEY);
-      if (cached) {
-        const { time, data } = JSON.parse(cached);
+      const c = localStorage.getItem(CACHE_KEY);
+      if (c) {
+        const { time, data } = JSON.parse(c);
         if (Date.now() - time < CACHE_TTL) {
-          content.innerHTML = renderAll(data) + refreshButton();
-          bindRefresh();
+          DATA = data;
           return;
         }
       }
     } catch(e) {}
   }
   
-  content.innerHTML = '<div class="loading">Загрузка списка игр...</div>';
+  const res = await fetch(`https://api.github.com/repos/${USER}/${REPO}/git/trees/main?recursive=1`);
+  if (!res.ok) throw new Error(`API: ${res.status}`);
+  const json = await res.json();
   
+  const data = {};
+  
+  for (const item of json.tree) {
+    if (item.type !== 'blob' || !item.path.endsWith('.html')) continue;
+    if (item.path === 'index.html') continue;
+    
+    const parts = item.path.split('/');
+    if (parts.length !== 3) continue;
+    
+    const [group, child, file] = parts;
+    const project = detectProject(file);
+    if (!project) continue;  // файл не по шаблону — пропускаем
+    
+    if (!data[group]) data[group] = {};
+    if (!data[group][project]) data[group][project] = {};
+    if (!data[group][project][child]) data[group][project][child] = [];
+    
+    data[group][project][child].push({
+      title: prettyName(file.replace('.html', '')),
+      url: item.path
+    });
+  }
+  
+  DATA = data;
   try {
-    const res = await fetch(
-      `https://api.github.com/repos/${USER}/${REPO}/git/trees/main?recursive=1`
-    );
-    if (!res.ok) throw new Error(`Ошибка API: ${res.status}`);
-    const data = await res.json();
-    
-    const groups = {};
-    
-    for (const item of data.tree) {
-      if (item.type !== 'blob' || !item.path.endsWith('.html')) continue;
-      if (item.path === 'index.html') continue;
-      
-      const parts = item.path.split('/');
-      if (parts.length !== 3) continue;
-      
-      const [group, child, file] = parts;
-      if (!groups[group]) groups[group] = {};
-      if (!groups[group][child]) groups[group][child] = { games: [] };
-      
-      // Пропускаем index.html, чтобы не было дублей
-      if (file === 'index.html') continue;
+    localStorage.setItem(CACHE_KEY, JSON.stringify({ time: Date.now(), data }));
+  } catch(e) {}
+}
 
-      groups[group][child].games.push({
-        title: prettyName(file.replace('.html', '')),
-        url: item.path
-      });
+// ============ РЕНДЕР ============
+function renderBreadcrumbs(items) {
+  const el = document.getElementById('breadcrumbs');
+  if (!items || items.length === 0) { el.innerHTML = ''; return; }
+  
+  let html = '<a href="#/">🏠 Главная</a>';
+  for (const it of items) {
+    html += `<span>›</span>`;
+    if (it.href) {
+      html += `<a href="${it.href}">${it.label}</a>`;
+    } else {
+      html += `<a style="background:rgba(255,255,255,0.25)">${it.label}</a>`;
     }
+  }
+  el.innerHTML = html;
+}
+
+function renderHome() {
+  renderBreadcrumbs([]);
+  let html = '<div class="cards">';
+  for (const key in GROUPS) {
+    const g = GROUPS[key];
+    const projectCount = DATA[key] ? Object.keys(DATA[key]).length : 0;
+    const childCount = DATA[key]
+      ? new Set(Object.values(DATA[key]).flatMap(p => Object.keys(p))).size
+      : 0;
     
-    try {
-      localStorage.setItem(CACHE_KEY, JSON.stringify({
-        time: Date.now(), data: groups
-      }));
-    } catch(e) {}
+    html += `
+      <a class="card" href="#/${key}">
+        <div class="emoji">${g.emoji}</div>
+        <h3>${g.title}</h3>
+        <div class="count">${childCount} учеников · ${projectCount} проектов</div>
+        <div class="badge">Перейти →</div>
+      </a>
+    `;
+  }
+  html += '</div>';
+  document.getElementById('content').innerHTML = html;
+}
+
+function renderGroup(groupKey) {
+  const g = GROUPS[groupKey];
+  if (!g) { location.hash = '#/'; return; }
+  
+  renderBreadcrumbs([
+    { label: g.title }
+  ]);
+  
+  // Все проекты + "Прочие" (если есть)
+  const groupData = DATA[groupKey] || {};
+  const projectKeys = new Set(Object.keys(groupData));
+  
+  // Порядок: сначала известные проекты, потом прочие
+  const orderedKeys = Object.keys(PROJECTS)
+    .filter((k, i, arr) => arr.indexOf(k) === i) // уникальные
+    .filter(k => PROJECTS[k]); // только существующие
+  
+  let html = '<div class="cards">';
+  
+  // Все известные проекты
+  const shownProjects = new Set();
+  for (const projKey of Object.keys(PROJECTS)) {
+    if (shownProjects.has(projKey)) continue;
+    // Найти "главный" ключ проекта (например, "mother_day" и "podarok" — одно)
+    const mainKey = projKey;
+    shownProjects.add(mainKey);
     
-    content.innerHTML = renderAll(groups) + refreshButton();
-    bindRefresh();
-  } catch (err) {
-    content.innerHTML = `
-      <div class="error">
-        <b>Не удалось загрузить игры.</b><br>
-        Ошибка: ${err.message}<br><br>
-        Проверь, что:<br>
-        1. Ник и имя репозитория в коде правильные (<b>${USER}/${REPO}</b>)<br>
-        2. Репозиторий публичный (Public)<br>
-        3. GitHub Pages включён в настройках
+    // Все возможные ключи для этого проекта (синонимы)
+    const aliases = Object.keys(PROJECTS).filter(k => 
+      PROJECTS[k].title === PROJECTS[mainKey].title
+    );
+    
+    const hasData = aliases.some(k => groupData[k]);
+    const childCount = hasData 
+      ? new Set(aliases.flatMap(k => Object.keys(groupData[k] || {}))).size 
+      : 0;
+    
+    const info = PROJECTS[mainKey];
+    html += `
+      <a class="card" href="#/${groupKey}/${mainKey}">
+        <div class="emoji">${info.emoji}</div>
+        <h3>${info.title}</h3>
+        <div class="count">${hasData ? `${childCount} работ` : 'пока нет работ'}</div>
+      </a>
+    `;
+  }
+  
+  html += '</div>';
+  document.getElementById('content').innerHTML = html;
+}
+
+function renderProject(groupKey, projKey) {
+  const g = GROUPS[groupKey];
+  const p = PROJECTS[projKey];
+  if (!g || !p) { location.hash = '#/'; return; }
+  
+  renderBreadcrumbs([
+    { label: g.title, href: `#/${groupKey}` },
+    { label: p.short }
+  ]);
+  
+  // Собираем игры всех "синонимов" проекта
+  const aliases = Object.keys(PROJECTS).filter(k => 
+    PROJECTS[k].title === PROJECTS[projKey].title
+  );
+  
+  const groupData = DATA[groupKey] || {};
+  const children = {};
+  
+  for (const alias of aliases) {
+    if (!groupData[alias]) continue;
+    for (const child in groupData[alias]) {
+      if (!children[child]) children[child] = [];
+      children[child].push(...groupData[alias][child]);
+    }
+  }
+  
+  const childKeys = Object.keys(children).sort();
+  
+  if (childKeys.length === 0) {
+    document.getElementById('content').innerHTML = `
+      <div class="empty">
+        <span class="big">${p.emoji}</span>
+        Здесь пока нет работ по проекту «${p.short}» в этой группе.
+      </div>
+    `;
+    return;
+  }
+  
+  let html = '<div class="child-list">';
+  for (const child of childKeys) {
+    html += `<div class="child">`;
+    html += `<h3>${prettyName(child)}</h3>`;
+    for (const game of children[child]) {
+      html += `<a class="game-btn" href="${game.url}" target="_blank">▶ ${game.title}</a>`;
+    }
+    html += `</div>`;
+  }
+  html += '</div>';
+  document.getElementById('content').innerHTML = html;
+}
+
+// ============ РОУТЕР ============
+function route() {
+  const hash = location.hash.replace(/^#\/?/, '');
+  const parts = hash.split('/').filter(Boolean);
+  
+  if (parts.length === 0) {
+    renderHome();
+  } else if (parts.length === 1) {
+    renderGroup(parts[0]);
+  } else if (parts.length >= 2) {
+    renderProject(parts[0], parts[1]);
+  }
+  
+  // Скролл наверх
+  window.scrollTo(0, 0);
+}
+
+// ============ СТАРТ ============
+async function init() {
+  document.getElementById('content').innerHTML = '<div class="loading">Загрузка проектов...</div>';
+  try {
+    await loadData();
+    route();
+  } catch (e) {
+    document.getElementById('content').innerHTML = `
+      <div class="empty">
+        <span class="big">⚠️</span>
+        Ошибка загрузки: ${e.message}<br>
+        <small>Проверь ник (${USER}) и репозиторий (${REPO})</small>
       </div>
     `;
   }
 }
 
-function refreshButton() {
-  return '<div class="refresh"><button onclick="refresh()">🔄 Обновить список</button></div>';
+function forceRefresh() {
+  localStorage.removeItem(CACHE_KEY);
+  init();
 }
 
-function bindRefresh() {
-  window.refresh = function() {
-    localStorage.removeItem(CACHE_KEY);
-    loadGames(true);
-  };
-}
-
-loadGames();
+window.addEventListener('hashchange', route);
+window.addEventListener('DOMContentLoaded', init);
 </script>
 
 </body>
