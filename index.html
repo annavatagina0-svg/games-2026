@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>🎮 Наши игры</title>
+<title>Визуальное программирование — Проект 1</title>
 <style>
   * { box-sizing: border-box; }
   body {
@@ -11,9 +11,23 @@
     max-width: 900px; margin: 0 auto; padding: 20px;
     background: #f0f2f5; color: #222;
   }
+  header {
+    text-align: center;
+    margin-bottom: 30px;
+    padding: 20px;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  }
   h1 {
-    text-align: center; color: #1F3A5F;
-    font-size: 28px; margin-bottom: 30px;
+    color: #1F3A5F;
+    font-size: 26px;
+    margin: 0 0 5px 0;
+  }
+  .subtitle {
+    color: #666;
+    font-size: 16px;
+    margin: 0;
   }
   h2 {
     color: #2a5298; margin-top: 35px; padding-bottom: 8px;
@@ -44,7 +58,7 @@
     margin: 20px 0;
   }
   .refresh {
-    text-align: center; margin: 20px 0;
+    text-align: center; margin: 30px 0;
   }
   .refresh button {
     background: #2a5298; color: white; border: none;
@@ -57,7 +71,8 @@
     color: #888; font-style: italic;
   }
   @media (max-width: 600px) {
-    h1 { font-size: 22px; }
+    h1 { font-size: 20px; }
+    .subtitle { font-size: 14px; }
     .child { padding: 12px 15px; }
     .game { display: block; text-align: center; margin: 6px 0; }
   }
@@ -65,21 +80,25 @@
 </head>
 <body>
 
-<h1>🎮 Наши игры</h1>
+<header>
+  <h1>🎮 Визуальное программирование</h1>
+  <p class="subtitle">Проект 1 · Наши игры</p>
+</header>
+
 <div id="content"><div class="loading">Загрузка списка игр...</div></div>
 
 <script>
 // ============ НАСТРОЙКИ ============
-const USER = 'annavatagina0-svg';  // Твой ник на GitHub
-const REPO = 'games-2026';         // Имя репозитория
+const USER = 'annavatagina0-svg';  
+const REPO = 'games-2026';         
 
 const GROUP_NAMES = {
-  'group1': 'Группа 1 (вторник)',
-  'group2': 'Группа 2 (пятница)'
+  'group1': 'Группа 1 · Вторник',
+  'group2': 'Группа 2 · Пятница'
 };
 
 const CACHE_KEY = 'games_catalog_v1';
-const CACHE_TTL = 5 * 60 * 1000;  // 5 минут
+const CACHE_TTL = 5 * 60 * 1000; 
 
 // ============ ФУНКЦИИ ============
 function prettyName(str) {
@@ -156,6 +175,9 @@ async function loadGames(forceRefresh = false) {
       if (!groups[group]) groups[group] = {};
       if (!groups[group][child]) groups[group][child] = { games: [] };
       
+      // Пропускаем index.html, чтобы не было дублей
+      if (file === 'index.html') continue;
+
       groups[group][child].games.push({
         title: prettyName(file.replace('.html', '')),
         url: item.path
