@@ -1,2 +1,202 @@
-const USER = 'annavatagina0-svg';  // Твой ник из скриншота
-const REPO = 'games-2026';         // Название репозитория
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>🎮 Наши игры</title>
+<style>
+  * { box-sizing: border-box; }
+  body {
+    font-family: -apple-system, Arial, sans-serif;
+    max-width: 900px; margin: 0 auto; padding: 20px;
+    background: #f0f2f5; color: #222;
+  }
+  h1 {
+    text-align: center; color: #1F3A5F;
+    font-size: 28px; margin-bottom: 30px;
+  }
+  h2 {
+    color: #2a5298; margin-top: 35px; padding-bottom: 8px;
+    border-bottom: 3px solid #2a5298;
+  }
+  .child {
+    background: white; margin: 12px 0; padding: 15px 20px;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  }
+  .child h3 {
+    margin: 0 0 12px 0; color: #333; font-size: 17px;
+  }
+  .game {
+    display: inline-block; background: #0066cc; color: white;
+    padding: 8px 16px; margin: 4px 4px 4px 0;
+    border-radius: 8px; text-decoration: none;
+    font-size: 14px; transition: 0.15s;
+  }
+  .game:hover { background: #0052a3; transform: translateY(-1px); }
+  .loading {
+    text-align: center; padding: 50px 20px;
+    color: #666; font-size: 18px;
+  }
+  .error {
+    background: #ffe6e6; border-left: 4px solid #d00;
+    padding: 15px; border-radius: 8px; color: #a00;
+    margin: 20px 0;
+  }
+  .refresh {
+    text-align: center; margin: 20px 0;
+  }
+  .refresh button {
+    background: #2a5298; color: white; border: none;
+    padding: 10px 24px; border-radius: 8px;
+    font-size: 14px; cursor: pointer;
+  }
+  .refresh button:hover { background: #1F3A5F; }
+  .empty {
+    text-align: center; padding: 40px;
+    color: #888; font-style: italic;
+  }
+  @media (max-width: 600px) {
+    h1 { font-size: 22px; }
+    .child { padding: 12px 15px; }
+    .game { display: block; text-align: center; margin: 6px 0; }
+  }
+</style>
+</head>
+<body>
+
+<h1>🎮 Наши игры</h1>
+<div id="content"><div class="loading">Загрузка списка игр...</div></div>
+
+<script>
+// ============ НАСТРОЙКИ ============
+const USER = 'annavatagina0-svg';  // Твой ник на GitHub
+const REPO = 'games-2026';         // Имя репозитория
+
+const GROUP_NAMES = {
+  'group1': 'Группа 1 (вторник)',
+  'group2': 'Группа 2 (пятница)'
+};
+
+const CACHE_KEY = 'games_catalog_v1';
+const CACHE_TTL = 5 * 60 * 1000;  // 5 минут
+
+// ============ ФУНКЦИИ ============
+function prettyName(str) {
+  return str
+    .replace(/[_-]/g, ' ')
+    .replace(/\b\w/g, c => c.toUpperCase());
+}
+
+function renderAll(groups) {
+  const groupNames = Object.keys(groups).sort();
+  if (groupNames.length === 0) {
+    return '<div class="empty">Пока нет ни одной игры. Загрузи первый файл в репозиторий.</div>';
+  }
+  
+  let html = '';
+  for (const groupKey of groupNames) {
+    const groupTitle = GROUP_NAMES[groupKey] || prettyName(groupKey);
+    html += `<h2>${groupTitle}</h2>`;
+    
+    const children = groups[groupKey];
+    const childKeys = Object.keys(children).sort();
+    
+    for (const childKey of childKeys) {
+      const child = children[childKey];
+      html += `<div class="child">`;
+      html += `<h3>${prettyName(childKey)}</h3>`;
+      
+      child.games.sort((a, b) => a.title.localeCompare(b.title));
+      for (const game of child.games) {
+        html += `<a class="game" href="${game.url}" target="_blank">${game.title}</a>`;
+      }
+      html += `</div>`;
+    }
+  }
+  return html;
+}
+
+async function loadGames(forceRefresh = false) {
+  const content = document.getElementById('content');
+  
+  if (!forceRefresh) {
+    try {
+      const cached = localStorage.getItem(CACHE_KEY);
+      if (cached) {
+        const { time, data } = JSON.parse(cached);
+        if (Date.now() - time < CACHE_TTL) {
+          content.innerHTML = renderAll(data) + refreshButton();
+          bindRefresh();
+          return;
+        }
+      }
+    } catch(e) {}
+  }
+  
+  content.innerHTML = '<div class="loading">Загрузка списка игр...</div>';
+  
+  try {
+    const res = await fetch(
+      `https://api.github.com/repos/${USER}/${REPO}/git/trees/main?recursive=1`
+    );
+    if (!res.ok) throw new Error(`Ошибка API: ${res.status}`);
+    const data = await res.json();
+    
+    const groups = {};
+    
+    for (const item of data.tree) {
+      if (item.type !== 'blob' || !item.path.endsWith('.html')) continue;
+      if (item.path === 'index.html') continue;
+      
+      const parts = item.path.split('/');
+      if (parts.length !== 3) continue;
+      
+      const [group, child, file] = parts;
+      if (!groups[group]) groups[group] = {};
+      if (!groups[group][child]) groups[group][child] = { games: [] };
+      
+      groups[group][child].games.push({
+        title: prettyName(file.replace('.html', '')),
+        url: item.path
+      });
+    }
+    
+    try {
+      localStorage.setItem(CACHE_KEY, JSON.stringify({
+        time: Date.now(), data: groups
+      }));
+    } catch(e) {}
+    
+    content.innerHTML = renderAll(groups) + refreshButton();
+    bindRefresh();
+  } catch (err) {
+    content.innerHTML = `
+      <div class="error">
+        <b>Не удалось загрузить игры.</b><br>
+        Ошибка: ${err.message}<br><br>
+        Проверь, что:<br>
+        1. Ник и имя репозитория в коде правильные (<b>${USER}/${REPO}</b>)<br>
+        2. Репозиторий публичный (Public)<br>
+        3. GitHub Pages включён в настройках
+      </div>
+    `;
+  }
+}
+
+function refreshButton() {
+  return '<div class="refresh"><button onclick="refresh()">🔄 Обновить список</button></div>';
+}
+
+function bindRefresh() {
+  window.refresh = function() {
+    localStorage.removeItem(CACHE_KEY);
+    loadGames(true);
+  };
+}
+
+loadGames();
+</script>
+
+</body>
+</html>
