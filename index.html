@@ -12,109 +12,61 @@
     min-height: 100vh; color: #222; padding: 20px;
   }
   .container { max-width: 960px; margin: 0 auto; }
-  
-  /* Хедер */
-  .header {
-    text-align: center; color: white; padding: 30px 20px;
-    margin-bottom: 20px;
-  }
-  .header h1 {
-    font-size: 30px; margin-bottom: 8px;
-    text-shadow: 0 2px 8px rgba(0,0,0,0.2);
-  }
+  .header { text-align: center; color: white; padding: 30px 20px; margin-bottom: 20px; }
+  .header h1 { font-size: 30px; margin-bottom: 8px; text-shadow: 0 2px 8px rgba(0,0,0,0.2); }
   .header p { font-size: 15px; opacity: 0.9; }
-  
-  /* Хлебные крошки */
   #breadcrumbs {
     background: rgba(255,255,255,0.15); backdrop-filter: blur(10px);
-    padding: 12px 20px; border-radius: 10px;
-    margin-bottom: 25px; font-size: 14px;
-    color: white; display: flex; align-items: center; flex-wrap: wrap;
+    padding: 12px 20px; border-radius: 10px; margin-bottom: 25px;
+    font-size: 14px; color: white; display: flex; align-items: center; flex-wrap: wrap;
   }
   #breadcrumbs a {
-    color: white; text-decoration: none;
-    padding: 4px 10px; border-radius: 6px;
-    background: rgba(255,255,255,0.1);
+    color: white; text-decoration: none; padding: 4px 10px;
+    border-radius: 6px; background: rgba(255,255,255,0.1);
     transition: background 0.15s; font-weight: 500;
   }
   #breadcrumbs a:hover { background: rgba(255,255,255,0.3); }
-  #breadcrumbs span.crumb-sep { margin: 0 8px; opacity: 0.6; }
-  #breadcrumbs span.crumb-active { 
-    padding: 4px 10px; background: rgba(255,255,255,0.3);
-    border-radius: 6px; font-weight: 600;
-  }
-  
-  /* Карточки */
+  #breadcrumbs .crumb-sep { margin: 0 8px; opacity: 0.6; }
+  #breadcrumbs .crumb-active { padding: 4px 10px; background: rgba(255,255,255,0.3); border-radius: 6px; font-weight: 600; }
   .cards {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
     gap: 20px;
   }
   .card {
-    background: white; padding: 30px 25px;
-    border-radius: 16px; text-decoration: none;
-    color: #222; box-shadow: 0 4px 20px rgba(0,0,0,0.15);
-    transition: all 0.25s;
-    display: flex; flex-direction: column; align-items: center;
-    text-align: center;
+    background: white; padding: 30px 25px; border-radius: 16px;
+    text-decoration: none; color: #222;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.15); transition: all 0.25s;
+    display: flex; flex-direction: column; align-items: center; text-align: center;
   }
-  .card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 8px 30px rgba(0,0,0,0.25);
-  }
+  .card:hover { transform: translateY(-4px); box-shadow: 0 8px 30px rgba(0,0,0,0.25); }
   .card .emoji { font-size: 52px; margin-bottom: 15px; }
-  .card h3 {
-    font-size: 20px; color: #1F3A5F;
-    margin-bottom: 8px; font-weight: 700;
-  }
+  .card h3 { font-size: 20px; color: #1F3A5F; margin-bottom: 8px; font-weight: 700; }
   .card .count { font-size: 13px; color: #888; margin-top: 10px; }
-  .card .badge {
-    display: inline-block; margin-top: 12px;
-    padding: 4px 12px; border-radius: 20px;
-    background: #e8f0fe; color: #1F3A5F;
-    font-size: 12px; font-weight: 600;
-  }
-  
-  /* Список детей */
+  .card .badge { display: inline-block; margin-top: 12px; padding: 4px 12px; border-radius: 20px; background: #e8f0fe; color: #1F3A5F; font-size: 12px; font-weight: 600; }
   .child-list { display: flex; flex-direction: column; gap: 12px; }
-  .child {
-    background: white; padding: 20px 24px;
-    border-radius: 14px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-  }
+  .child { background: white; padding: 20px 24px; border-radius: 14px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
   .child h3 { font-size: 17px; color: #1F3A5F; margin-bottom: 12px; }
   .game-btn {
-    display: inline-block; padding: 10px 18px;
-    background: #0066cc; color: white;
-    text-decoration: none; border-radius: 8px;
-    margin: 4px 6px 4px 0; font-size: 14px;
-    font-weight: 600; transition: 0.15s;
+    display: inline-block; padding: 10px 18px; background: #0066cc; color: white;
+    text-decoration: none; border-radius: 8px; margin: 4px 6px 4px 0;
+    font-size: 14px; font-weight: 600; transition: 0.15s;
   }
   .game-btn:hover { background: #0052a3; transform: translateY(-1px); }
-  
-  /* Пусто */
   .empty {
-    background: white; padding: 40px 20px;
-    border-radius: 14px; text-align: center;
-    color: #888; font-style: italic;
+    background: white; padding: 40px 20px; border-radius: 14px;
+    text-align: center; color: #888; font-style: italic;
     box-shadow: 0 2px 10px rgba(0,0,0,0.1);
   }
   .empty .big { font-size: 48px; display: block; margin-bottom: 10px; }
-  
-  /* Кнопка обновить */
   .refresh-bar { text-align: center; margin: 30px 0; }
   .refresh-bar button {
-    background: rgba(255,255,255,0.9); color: #1F3A5F;
-    border: none; padding: 12px 26px;
-    border-radius: 10px; font-size: 14px;
+    background: rgba(255,255,255,0.9); color: #1F3A5F; border: none;
+    padding: 12px 26px; border-radius: 10px; font-size: 14px;
     font-weight: 600; cursor: pointer;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.15);
-    transition: 0.15s;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.15); transition: 0.15s;
   }
   .refresh-bar button:hover { transform: translateY(-1px); }
-  
   .loading { text-align: center; padding: 50px; color: white; font-size: 18px; }
-  
-  /* Мобильные */
   @media (max-width: 600px) {
     .header h1 { font-size: 22px; }
     .header p { font-size: 13px; }
@@ -151,42 +103,95 @@ const GROUPS = {
   'group2': { title: 'Группа · Пятница', emoji: '📅' }
 };
 
-// Проекты: определяем по ПРЕФИКСУ имени файла
+// Ключи проектов (используются и как имена папок, и как префиксы файлов)
 const PROJECTS = {
   'halloween':  { title: 'Проект 1. Хэллоуин',     emoji: '🎃' },
   'mother_day': { title: 'Проект 2. Подарок маме', emoji: '💐' },
-  'podarok':    { title: 'Проект 2. Подарок маме', emoji: '💐' },
-  'new_year':   { title: 'Проект 3. Новый год',    emoji: '🎄' },
-  'novy_god':   { title: 'Проект 3. Новый год',    emoji: '🎄' }
+  'new_year':   { title: 'Проект 3. Новый год',    emoji: '🎄' }
 };
 
-// Уникальные проекты (чтобы не было дублей)
-const UNIQUE_PROJECTS = {};
-for (const [key, proj] of Object.entries(PROJECTS)) {
-  if (!UNIQUE_PROJECTS[proj.title]) {
-    UNIQUE_PROJECTS[proj.title] = { ...proj, mainKey: key, aliases: [key] };
-  } else {
-    UNIQUE_PROJECTS[proj.title].aliases.push(key);
-  }
-}
+// Алиасы для префиксов файлов (чтобы "podarok" = "mother_day")
+const ALIASES = {
+  'mother_day': ['mother_day', 'podarok'],
+  'new_year':   ['new_year', 'novy_god'],
+  'halloween':  ['halloween']
+};
 
-const CACHE_KEY = 'games_catalog_v3';
+const CACHE_KEY = 'games_catalog_v4';
 const CACHE_TTL = 5 * 60 * 1000;
-
 let DATA = null;
 
 // ============ УТИЛИТЫ ============
 function prettyName(s) {
-  return s.replace(/[_-]/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+  return s.replace(/[_-]/g, ' ').replace(/\b\w/g, c => c.toUpperCase()).trim();
 }
 
-function detectProject(filename) {
-  const lower = filename.toLowerCase();
-  const keys = Object.keys(PROJECTS).sort((a,b) => b.length - a.length);
-  for (const key of keys) {
-    if (lower.startsWith(key)) return key;
+// Из пути вытаскиваем: [group, project, child, file]
+// Работает для ДВУХ форматов:
+//   1) group2/matvei/halloween_matvey.html   (старый)
+//   2) group2/halloween/matvey.html          (новый)
+//   3) group2/halloween/matvey (файл в подпапке с именем ребенка — редко)
+function parsePath(path) {
+  const parts = path.split('/');
+  if (parts.length < 3) return null;
+  
+  const groupKey = parts[0];
+  if (!GROUPS[groupKey]) return null;
+  
+  const fileName = parts[parts.length - 1];
+  if (!fileName.endsWith('.html')) return null;
+  const baseName = fileName.slice(0, -5);
+  const intermediateDirs = parts.slice(1, -1);
+  
+  let projectKey = null;
+  let childKey = null;
+  
+  // Определяем проект по промежуточной папке (формат 2 и 3)
+  for (const dir of intermediateDirs) {
+    if (PROJECTS[dir]) { projectKey = dir; break; }
   }
-  return null;
+  
+  // Если проекта нет в папке — ищем по префиксу файла (формат 1)
+  if (!projectKey) {
+    const lower = baseName.toLowerCase();
+    const allPrefixes = [];
+    for (const [proj, aliases] of Object.entries(ALIASES)) {
+      for (const alias of aliases) {
+        allPrefixes.push({ prefix: alias, project: proj });
+      }
+    }
+    // Длинные префиксы первыми (чтобы "new_year" не путалось с "new")
+    allPrefixes.sort((a, b) => b.prefix.length - a.prefix.length);
+    
+    for (const p of allPrefixes) {
+      if (lower.startsWith(p.prefix + '_') || lower === p.prefix) {
+        projectKey = p.project;
+        // Отрезаем префикс → получаем имя ребёнка
+        let rest = baseName.slice(p.prefix.length);
+        rest = rest.replace(/^_/, '');
+        childKey = rest || 'unknown';
+        break;
+      }
+    }
+    // Если префикс не найден — файл не наш
+    if (!projectKey) return null;
+    
+    return { groupKey, projectKey, childKey };
+  }
+  
+  // Формат 2: группируем по промежуточной папке, которая НЕ проект
+  // Например: group2/halloween/matvey → childKey = "matvey"
+  const nonProjectDirs = intermediateDirs.filter(d => !PROJECTS[d]);
+  
+  if (nonProjectDirs.length > 0) {
+    // Есть папка с именем ребёнка + файл внутри
+    childKey = nonProjectDirs[0];
+  } else {
+    // Файл лежит прямо в папке проекта: group2/halloween/matvey.html
+    childKey = baseName;
+  }
+  
+  return { groupKey, projectKey, childKey };
 }
 
 // ============ ПАРСИНГ ============
@@ -208,22 +213,20 @@ async function loadData(force = false) {
   const data = {};
   
   for (const item of json.tree) {
-    if (item.type !== 'blob' || !item.path.endsWith('.html')) continue;
-    if (item.path === 'index.html') continue;
+    if (item.type !== 'blob') continue;
+    if (item.path === 'index.html' || item.path === 'README.md') continue;
     
-    const parts = item.path.split('/');
-    if (parts.length !== 3) continue;
+    const parsed = parsePath(item.path);
+    if (!parsed) continue;
     
-    const [group, child, file] = parts;
-    const project = detectProject(file);
-    if (!project) continue;
+    const { groupKey, projectKey, childKey } = parsed;
     
-    if (!data[group]) data[group] = {};
-    if (!data[group][project]) data[group][project] = {};
-    if (!data[group][project][child]) data[group][project][child] = [];
+    if (!data[groupKey]) data[groupKey] = {};
+    if (!data[groupKey][projectKey]) data[groupKey][projectKey] = {};
+    if (!data[groupKey][projectKey][childKey]) data[groupKey][projectKey][childKey] = [];
     
-    data[group][project][child].push({
-      title: prettyName(file.replace('.html', '')),
+    data[groupKey][projectKey][childKey].push({
+      title: prettyName(childKey),
       url: item.path
     });
   }
@@ -261,7 +264,6 @@ function renderHome() {
     const childCount = DATA[key]
       ? new Set(Object.values(DATA[key]).flatMap(p => Object.keys(p))).size
       : 0;
-    
     html += `
       <a class="card" href="#/${key}">
         <div class="emoji">${g.emoji}</div>
@@ -278,70 +280,47 @@ function renderHome() {
 function renderGroup(groupKey) {
   const g = GROUPS[groupKey];
   if (!g) { location.hash = '#/'; return; }
-  
   renderBreadcrumbs([{ label: g.title }]);
   
   const groupData = DATA[groupKey] || {};
-  
   let html = '<div class="cards">';
   
-  // Итерируемся по УНИКАЛЬНЫМ проектам
-  for (const title in UNIQUE_PROJECTS) {
-    const proj = UNIQUE_PROJECTS[title];
-    
-    // Собираем уникальных детей по всем алиасам (mother_day, podarok и т.д.)
-    const childrenSet = new Set();
-    for (const alias of proj.aliases) {
-      if (groupData[alias]) {
-        Object.keys(groupData[alias]).forEach(c => childrenSet.add(c));
-      }
-    }
+  for (const projKey in PROJECTS) {
+    const proj = PROJECTS[projKey];
+    const childrenSet = new Set(Object.keys(groupData[projKey] || {}));
     const childCount = childrenSet.size;
     
     html += `
-      <a class="card" href="#/${groupKey}/${proj.mainKey}">
+      <a class="card" href="#/${groupKey}/${projKey}">
         <div class="emoji">${proj.emoji}</div>
-        <h3>${title}</h3>
+        <h3>${proj.title}</h3>
         <div class="count">${childCount ? `${childCount} работ` : 'пока нет работ'}</div>
       </a>
     `;
   }
-  
   html += '</div>';
   document.getElementById('content').innerHTML = html;
 }
 
 function renderProject(groupKey, projKey) {
   const g = GROUPS[groupKey];
-  const projInfo = PROJECTS[projKey];
-  if (!g || !projInfo) { location.hash = '#/'; return; }
-  
-  const title = projInfo.title;
-  const uniqueProj = UNIQUE_PROJECTS[title];
+  const proj = PROJECTS[projKey];
+  if (!g || !proj) { location.hash = '#/'; return; }
   
   renderBreadcrumbs([
     { label: g.title, href: `#/${groupKey}` },
-    { label: title }
+    { label: proj.title }
   ]);
   
   const groupData = DATA[groupKey] || {};
-  const children = {};
-  
-  for (const alias of uniqueProj.aliases) {
-    if (!groupData[alias]) continue;
-    for (const child in groupData[alias]) {
-      if (!children[child]) children[child] = [];
-      children[child].push(...groupData[alias][child]);
-    }
-  }
-  
+  const children = groupData[projKey] || {};
   const childKeys = Object.keys(children).sort();
   
   if (childKeys.length === 0) {
     document.getElementById('content').innerHTML = `
       <div class="empty">
-        <span class="big">${uniqueProj.emoji}</span>
-        Здесь пока нет работ по проекту «${title}» в этой группе.
+        <span class="big">${proj.emoji}</span>
+        Здесь пока нет работ по проекту «${proj.title}» в этой группе.
       </div>
     `;
     return;
@@ -352,7 +331,7 @@ function renderProject(groupKey, projKey) {
     html += `<div class="child">`;
     html += `<h3>${prettyName(child)}</h3>`;
     for (const game of children[child]) {
-      html += `<a class="game-btn" href="${game.url}" target="_blank">▶ ${game.title}</a>`;
+      html += `<a class="game-btn" href="${game.url}" target="_blank">▶ Открыть игру</a>`;
     }
     html += `</div>`;
   }
@@ -382,8 +361,7 @@ async function init() {
     document.getElementById('content').innerHTML = `
       <div class="empty">
         <span class="big">⚠️</span>
-        Ошибка загрузки: ${e.message}<br>
-        <small>Проверь ник (${USER}) и репозиторий (${REPO})</small>
+        Ошибка: ${e.message}
       </div>
     `;
   }
