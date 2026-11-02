@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Визуальное программирование</title>
+<title>Визуальное программирование · Школа 30</title>
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body {
@@ -52,6 +52,39 @@
     font-size: 14px; font-weight: 600; transition: 0.15s;
   }
   .game-btn:hover { background: #0052a3; transform: translateY(-1px); }
+  
+  /* Стикер-заметка */
+  .sticker {
+    background: #fff8e1;
+    border-left: 6px solid #ffb300;
+    border-radius: 12px;
+    padding: 16px 20px;
+    margin-bottom: 25px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    color: #5d4037;
+    font-size: 14px;
+    line-height: 1.5;
+    white-space: pre-wrap;
+    position: relative;
+  }
+  .sticker::before {
+    content: "💡";
+    position: absolute;
+    top: -12px; left: 12px;
+    background: #ffb300;
+    width: 30px; height: 30px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+  }
+  .sticker-title {
+    font-weight: 700; color: #e65100;
+    margin-bottom: 6px; font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  
   .empty {
     background: white; padding: 40px 20px; border-radius: 14px;
     text-align: center; color: #888; font-style: italic;
@@ -83,7 +116,7 @@
 <div class="container">
   <div class="header">
     <h1>🎮 Визуальное программирование</h1>
-    <p>Проекты наших учеников</p>
+    <p>Школа 30 · Проекты наших учеников</p>
   </div>
   
   <div id="breadcrumbs"></div>
@@ -103,21 +136,13 @@ const GROUPS = {
   'group2': { title: 'Группа · Пятница', emoji: '📅' }
 };
 
-// Ключи проектов (используются и как имена папок, и как префиксы файлов)
 const PROJECTS = {
   'halloween':  { title: 'Проект 1. Хэллоуин',     emoji: '🎃' },
   'mother_day': { title: 'Проект 2. Подарок маме', emoji: '💐' },
   'new_year':   { title: 'Проект 3. Новый год',    emoji: '🎄' }
 };
 
-// Алиасы для префиксов файлов (чтобы "podarok" = "mother_day")
-const ALIASES = {
-  'mother_day': ['mother_day', 'podarok'],
-  'new_year':   ['new_year', 'novy_god'],
-  'halloween':  ['halloween']
-};
-
-const CACHE_KEY = 'games_catalog_v4';
+const CACHE_KEY = 'games_catalog_v6';
 const CACHE_TTL = 5 * 60 * 1000;
 let DATA = null;
 
@@ -126,72 +151,69 @@ function prettyName(s) {
   return s.replace(/[_-]/g, ' ').replace(/\b\w/g, c => c.toUpperCase()).trim();
 }
 
-// Из пути вытаскиваем: [group, project, child, file]
-// Работает для ДВУХ форматов:
-//   1) group2/matvei/halloween_matvey.html   (старый)
-//   2) group2/halloween/matvey.html          (новый)
-//   3) group2/halloween/matvey (файл в подпапке с именем ребенка — редко)
 function parsePath(path) {
   const parts = path.split('/');
   if (parts.length < 3) return null;
-  
   const groupKey = parts[0];
   if (!GROUPS[groupKey]) return null;
-  
   const fileName = parts[parts.length - 1];
   if (!fileName.endsWith('.html')) return null;
   const baseName = fileName.slice(0, -5);
   const intermediateDirs = parts.slice(1, -1);
   
   let projectKey = null;
-  let childKey = null;
-  
-  // Определяем проект по промежуточной папке (формат 2 и 3)
   for (const dir of intermediateDirs) {
     if (PROJECTS[dir]) { projectKey = dir; break; }
   }
   
-  // Если проекта нет в папке — ищем по префиксу файла (формат 1)
-  if (!projectKey) {
-    const lower = baseName.toLowerCase();
-    const allPrefixes = [];
-    for (const [proj, aliases] of Object.entries(ALIASES)) {
-      for (const alias of aliases) {
-        allPrefixes.push({ prefix: alias, project: proj });
-      }
-    }
-    // Длинные префиксы первыми (чтобы "new_year" не путалось с "new")
-    allPrefixes.sort((a, b) => b.prefix.length - a.prefix.length);
-    
-    for (const p of allPrefixes) {
-      if (lower.startsWith(p.prefix + '_') || lower === p.prefix) {
-        projectKey = p.project;
-        // Отрезаем префикс → получаем имя ребёнка
-        let rest = baseName.slice(p.prefix.length);
-        rest = rest.replace(/^_/, '');
-        childKey = rest || 'unknown';
-        break;
-      }
-    }
-    // Если префикс не найден — файл не наш
-    if (!projectKey) return null;
-    
-    return { groupKey, projectKey, childKey };
+  if (projectKey) {
+    const nonProjectDirs = intermediateDirs.filter(d => !PROJECTS[d]);
+    const childKey = nonProjectDirs.length > 0 ? nonProjectDirs[0] : baseName;
+    return { groupKey, projectKey, childKey, path };
   }
   
-  // Формат 2: группируем по промежуточной папке, которая НЕ проект
-  // Например: group2/halloween/matvey → childKey = "matvey"
-  const nonProjectDirs = intermediateDirs.filter(d => !PROJECTS[d]);
-  
-  if (nonProjectDirs.length > 0) {
-    // Есть папка с именем ребёнка + файл внутри
-    childKey = nonProjectDirs[0];
-  } else {
-    // Файл лежит прямо в папке проекта: group2/halloween/matvey.html
-    childKey = baseName;
+  const lower = baseName.toLowerCase();
+  const allPrefixes = [];
+  for (const [proj, aliases] of Object.entries({
+    'mother_day': ['mother_day', 'podarok'],
+    'new_year': ['new_year', 'novy_god'],
+    'halloween': ['halloween']
+  })) {
+    for (const alias of aliases) allPrefixes.push({ prefix: alias, project: proj });
   }
+  allPrefixes.sort((a, b) => b.prefix.length - a.prefix.length);
   
-  return { groupKey, projectKey, childKey };
+  for (const p of allPrefixes) {
+    if (lower.startsWith(p.prefix + '_') || lower === p.prefix) {
+      const rest = baseName.slice(p.prefix.length).replace(/^_/, '');
+      return { groupKey, projectKey: p.project, childKey: rest || 'unknown', path };
+    }
+  }
+  return null;
+}
+
+// ============ ЗАГРУЗКА ЗАМЕТКИ ============
+async function fetchNote(path) {
+  try {
+    const url = `https://raw.githubusercontent.com/${USER}/${REPO}/main/${path}`;
+    const res = await fetch(url);
+    if (!res.ok) return null;
+    const text = await res.text();
+    return text.trim() || null;
+  } catch (e) {
+    return null;
+  }
+}
+
+function stickerHTML(text, title) {
+  if (!text) return '';
+  const safe = text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  return `
+    <div class="sticker">
+      <div class="sticker-title">${title || 'Заметка'}</div>
+      ${safe}
+    </div>
+  `;
 }
 
 // ============ ПАРСИНГ ============
@@ -215,16 +237,12 @@ async function loadData(force = false) {
   for (const item of json.tree) {
     if (item.type !== 'blob') continue;
     if (item.path === 'index.html' || item.path === 'README.md') continue;
-    
     const parsed = parsePath(item.path);
     if (!parsed) continue;
-    
     const { groupKey, projectKey, childKey } = parsed;
-    
     if (!data[groupKey]) data[groupKey] = {};
     if (!data[groupKey][projectKey]) data[groupKey][projectKey] = {};
     if (!data[groupKey][projectKey][childKey]) data[groupKey][projectKey][childKey] = [];
-    
     data[groupKey][projectKey][childKey].push({
       title: prettyName(childKey),
       url: item.path
@@ -242,16 +260,12 @@ function renderBreadcrumbs(items) {
   const el = document.getElementById('breadcrumbs');
   if (!items || items.length === 0) { el.style.display = 'none'; return; }
   el.style.display = 'flex';
-  
   let html = '<a href="#/">🏠 Главная</a>';
   for (let i = 0; i < items.length; i++) {
     const it = items[i];
     html += `<span class="crumb-sep">›</span>`;
-    if (it.href && i < items.length - 1) {
-      html += `<a href="${it.href}">${it.label}</a>`;
-    } else {
-      html += `<span class="crumb-active">${it.label}</span>`;
-    }
+    if (it.href && i < items.length - 1) html += `<a href="${it.href}">${it.label}</a>`;
+    else html += `<span class="crumb-active">${it.label}</span>`;
   }
   el.innerHTML = html;
 }
@@ -261,9 +275,7 @@ function renderHome() {
   let html = '<div class="cards">';
   for (const key in GROUPS) {
     const g = GROUPS[key];
-    const childCount = DATA[key]
-      ? new Set(Object.values(DATA[key]).flatMap(p => Object.keys(p))).size
-      : 0;
+    const childCount = DATA[key] ? new Set(Object.values(DATA[key]).flatMap(p => Object.keys(p))).size : 0;
     html += `
       <a class="card" href="#/${key}">
         <div class="emoji">${g.emoji}</div>
@@ -277,19 +289,21 @@ function renderHome() {
   document.getElementById('content').innerHTML = html;
 }
 
-function renderGroup(groupKey) {
+async function renderGroup(groupKey) {
   const g = GROUPS[groupKey];
   if (!g) { location.hash = '#/'; return; }
   renderBreadcrumbs([{ label: g.title }]);
   
-  const groupData = DATA[groupKey] || {};
-  let html = '<div class="cards">';
+  // Загружаем заметку группы
+  const note = await fetchNote(`${groupKey}/note.txt`);
   
+  const groupData = DATA[groupKey] || {};
+  let html = stickerHTML(note, 'Заметка группы');
+  html += '<div class="cards">';
   for (const projKey in PROJECTS) {
     const proj = PROJECTS[projKey];
     const childrenSet = new Set(Object.keys(groupData[projKey] || {}));
     const childCount = childrenSet.size;
-    
     html += `
       <a class="card" href="#/${groupKey}/${projKey}">
         <div class="emoji">${proj.emoji}</div>
@@ -302,31 +316,36 @@ function renderGroup(groupKey) {
   document.getElementById('content').innerHTML = html;
 }
 
-function renderProject(groupKey, projKey) {
+async function renderProject(groupKey, projKey) {
   const g = GROUPS[groupKey];
   const proj = PROJECTS[projKey];
   if (!g || !proj) { location.hash = '#/'; return; }
-  
   renderBreadcrumbs([
     { label: g.title, href: `#/${groupKey}` },
     { label: proj.title }
   ]);
   
+  // Загружаем заметку проекта
+  const note = await fetchNote(`${groupKey}/${projKey}/note.txt`);
+  
   const groupData = DATA[groupKey] || {};
   const children = groupData[projKey] || {};
   const childKeys = Object.keys(children).sort();
   
+  let html = stickerHTML(note, `Заметка: ${proj.title}`);
+  
   if (childKeys.length === 0) {
-    document.getElementById('content').innerHTML = `
+    html += `
       <div class="empty">
         <span class="big">${proj.emoji}</span>
         Здесь пока нет работ по проекту «${proj.title}» в этой группе.
       </div>
     `;
+    document.getElementById('content').innerHTML = html;
     return;
   }
   
-  let html = '<div class="child-list">';
+  html += '<div class="child-list">';
   for (const child of childKeys) {
     html += `<div class="child">`;
     html += `<h3>${prettyName(child)}</h3>`;
@@ -339,31 +358,22 @@ function renderProject(groupKey, projKey) {
   document.getElementById('content').innerHTML = html;
 }
 
-// ============ РОУТЕР ============
 function route() {
   const hash = location.hash.replace(/^#\/?/, '');
   const parts = hash.split('/').filter(Boolean);
-  
   if (parts.length === 0) renderHome();
   else if (parts.length === 1) renderGroup(parts[0]);
   else renderProject(parts[0], parts[1]);
-  
   window.scrollTo(0, 0);
 }
 
-// ============ СТАРТ ============
 async function init() {
   document.getElementById('content').innerHTML = '<div class="loading">Загрузка проектов...</div>';
   try {
     await loadData();
-    route();
+    await route();
   } catch (e) {
-    document.getElementById('content').innerHTML = `
-      <div class="empty">
-        <span class="big">⚠️</span>
-        Ошибка: ${e.message}
-      </div>
-    `;
+    document.getElementById('content').innerHTML = `<div class="empty"><span class="big">⚠️</span>Ошибка: ${e.message}</div>`;
   }
 }
 
